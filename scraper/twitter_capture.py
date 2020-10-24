@@ -2,6 +2,7 @@
 
 from time import sleep
 from os import getenv
+from ssm import SSM
 import twitter
 
 
@@ -12,12 +13,12 @@ class TwitterCapture(object):
         self.param_name =  getenv("SSM_PARAM_INITIAL_RUN") or "NULL"
         self.since_date = getenv("SINCE_DATE") or "2020-03-01"
         self.twitter_term = getenv("TWITTER_KEYWORD") or "#awscopilot"
+        self.param_name = "/{}/twitter_checkpoint".format(getenv("COPILOT_ENVIRONMENT_NAME"))
         self.api = self.instantiate_api()
 
     def instantiate_api(self):
         consumer_key, consumer_secret, access_token, access_token_secret = getenv('TWITTER_CONSUMER_API_KEY'), getenv('TWITTER_CONSUMER_API_SECRET'),\
         getenv('TWITTER_ACCESS_TOKEN'), getenv('TWITTER_ACCESS_TOKEN_SECRET')
-        print(consumer_key, consumer_secret, access_token, access_token_secret)
         return twitter.Api(consumer_key=consumer_key,
                            consumer_secret=consumer_secret,
                            access_token_key=access_token,
@@ -31,6 +32,7 @@ class TwitterCapture(object):
     def search(self, since_date=None, result_type="recent", count=100, include_entities=False, last_item=None, retries=0):
         print("Searching twitter for term \"{}\", since date of \"{}\", and since last tweet id of \"{}\"".format(self.twitter_term, since_date, last_item))
         try:
+            if last_item is not None: last_item = int(last_item)
             return self.api.GetSearch(term=self.twitter_term, result_type=result_type, count=count, include_entities=include_entities, since=since_date, since_id=last_item)
         except Exception as e:
             # Backoff with rate limit
@@ -41,6 +43,7 @@ class TwitterCapture(object):
             self.search(since_date=since_date, last_item=last_item, retries=retries)
             
     def parse_tweet(self, raw_data):
+        print(raw_data)
         retweet_data = raw_data.retweeted_status
         return {
             "id": raw_data.id,
@@ -54,8 +57,13 @@ class TwitterCapture(object):
             }
         }
         
+    def get_parameter(self):
+        return SSM().get_parameter(self.param_name, "first_run")['Parameter']['Value']
+        
     def main(self):
-        results = self.search()
+        checkpoint_value = self.get_parameter()
+        if checkpoint_value == 'first_run': checkpoint_value = None
+        results = self.search(last_item=checkpoint_value)
         result_list = list()
         for tweet in results:
             if getenv('DEBUG'):
