@@ -12,11 +12,12 @@ class TwitterCapture(object):
         self.param_name =  getenv("SSM_PARAM_INITIAL_RUN") or "NULL"
         self.since_date = getenv("SINCE_DATE") or "2020-03-01"
         self.twitter_term = getenv("TWITTER_KEYWORD") or "#awscopilot"
-        self.secrets = "Create secrets module or get from env var, need to figure out"
         self.api = self.instantiate_api()
 
     def instantiate_api(self):
-        consumer_key, consumer_secret, access_token, access_token_secret = self.secrets
+        consumer_key, consumer_secret, access_token, access_token_secret = getenv('TWITTER_CONSUMER_API_KEY'), getenv('TWITTER_CONSUMER_API_SECRET'),\
+        getenv('TWITTER_ACCESS_TOKEN'), getenv('TWITTER_ACCESS_TOKEN_SECRET')
+        print(consumer_key, consumer_secret, access_token, access_token_secret)
         return twitter.Api(consumer_key=consumer_key,
                            consumer_secret=consumer_secret,
                            access_token_key=access_token,
