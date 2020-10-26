@@ -13,7 +13,7 @@ class TwitterCapture(object):
         self.param_name =  getenv("SSM_PARAM_INITIAL_RUN") or "NULL"
         self.since_date = getenv("SINCE_DATE") or "2020-03-01"
         self.twitter_term = getenv("TWITTER_KEYWORD") or "#awscopilot"
-        self.param_name = "/{}/twitter_checkpoint".format(getenv("COPILOT_ENVIRONMENT_NAME"))
+        self.param_name = getenv("CHECKPOINT_PARAMETER_NAME")
         self.api = self.instantiate_api()
 
     def instantiate_api(self):
@@ -43,7 +43,6 @@ class TwitterCapture(object):
             self.search(since_date=since_date, last_item=last_item, retries=retries)
             
     def parse_tweet(self, raw_data):
-        print(raw_data)
         retweet_data = raw_data.retweeted_status
         return {
             "id": raw_data.id,
@@ -61,14 +60,13 @@ class TwitterCapture(object):
         return SSM().get_parameter(self.param_name, "first_run")['Parameter']['Value']
         
     def main(self):
-        #checkpoint_value = self.get_parameter()
-        checkpoint_value = 'first_run'
-        if checkpoint_value == 'first_run': checkpoint_value = None
+        checkpoint_value = self.get_parameter()
+        if checkpoint_value == 'None': checkpoint_value = None
         results = self.search(last_item=checkpoint_value)
         result_list = list()
         for tweet in results:
             if getenv('DEBUG'):
-                print(self.parse_tweet(raw_data=tweet))
+                print("RAW TWEET DATA: {}".format(self.parse_tweet(raw_data=tweet)))
             result_list.append(self.parse_tweet(raw_data=tweet))
             
         return result_list
