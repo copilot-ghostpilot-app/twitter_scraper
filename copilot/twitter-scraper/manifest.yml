@@ -1,0 +1,15 @@
+name: twitter-scraper
+type: Scheduled Job
+image:
+  build: ./Dockerfile
+cpu: 256
+memory: 512
+on:
+  schedule: "@every 2m"
+variables:                    
+  DEBUG: "True"
+secrets:
+  TWITTER_ACCESS_TOKEN: TWITTER_ACCESS_TOKEN
+  TWITTER_ACCESS_TOKEN_SECRET: TWITTER_ACCESS_TOKEN_SECRET
+  TWITTER_CONSUMER_API_KEY: TWITTER_CONSUMER_API_KEY
+  TWITTER_CONSUMER_API_SECRET: TWITTER_CONSUMER_API_SECRET

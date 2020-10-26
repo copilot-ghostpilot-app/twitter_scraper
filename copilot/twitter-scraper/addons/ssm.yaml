@@ -1,0 +1,40 @@
+# You can use any of these parameters to create conditions or mappings in your template.
+Parameters:
+  App:
+    Type: String
+    Description: Your application's name.
+  Env:
+    Type: String
+    Description: The environment name your service, job, or workflow is being deployed to.
+  Name:
+    Type: String
+    Description: The name of the service, job, or workflow being deployed.
+
+Resources:
+  CheckpointParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Description: Twitter last id for checkpoint when looking for latest tweets
+      Name: { "Fn::Sub": "/${Env}/twitter_checkpoint" }
+      Value: None
+      Type: String
+
+  CheckpointParameterPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      PolicyDocument:
+        Version: 2012-10-17
+        Statement:
+          - Sid: SSMActions
+            Effect: Allow
+            Action:
+              - ssm:*
+            Resource: !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/${Env}/twitter_checkpoint"
+            
+Outputs:
+  CheckpointParameterName:
+    Description: "Checkpoint Parameter Name"
+    Value: !Ref CheckpointParameter
+  CheckpointParameterPolicyArn:
+    Description: "The ARN of the ManagedPolicy to attach to the task role."
+    Value: !Ref CheckpointParameterPolicy
