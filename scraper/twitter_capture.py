@@ -61,7 +61,8 @@ class TwitterCapture(object):
         return SSM().get_parameter(self.param_name, "first_run")['Parameter']['Value']
         
     def main(self):
-        checkpoint_value = self.get_parameter()
+        #checkpoint_value = self.get_parameter()
+        checkpoint_value = 'first_run'
         if checkpoint_value == 'first_run': checkpoint_value = None
         results = self.search(last_item=checkpoint_value)
         result_list = list()

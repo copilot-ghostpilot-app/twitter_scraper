@@ -15,10 +15,10 @@ def main():
     tweets = TwitterCapture().main()
     for tweet in tweets:
         print(API.post_api(endpoint=API_ENDPOINT, payload=tweet))
-    try:
-        set_parameter(value=str(tweets[-1]['id']))
-    except IndexError as e:
-        pass
+    #try:
+    #    set_parameter(value=str(tweets[-1]['id']))
+    #except IndexError as e:
+    #    pass
         
         
 if __name__ == "__main__":
