@@ -8,8 +8,7 @@ on:
   schedule: "@every 2m"
 variables:                    
   DEBUG: "True"
-  # This needs to be replaced with the backend API url
-  API_ENDPOINT: "https://postman-echo.com/post"
+  API_ENDPOINT: "backendpu"
 secrets:
   TWITTER_ACCESS_TOKEN: TWITTER_ACCESS_TOKEN
   TWITTER_ACCESS_TOKEN_SECRET: TWITTER_ACCESS_TOKEN_SECRET

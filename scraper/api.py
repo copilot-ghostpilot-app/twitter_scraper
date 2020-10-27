@@ -1,12 +1,15 @@
 #!/usr/bin/env python3
 
 from requests import request
+from os import getenv
 
 class API(object):
 
     @staticmethod
     def post_api(endpoint="https://postman-echo.com/post", payload="Test"):
-        headers= {}
+        headers = {'Content-Type': 'application/json'}
+        if getenv('DEBUG'):
+            print(endpoint, headers, payload)
         response = request("POST", endpoint, headers=headers, data=payload)
         return response
 

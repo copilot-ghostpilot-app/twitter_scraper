@@ -14,7 +14,6 @@ class SSM(object):
             )
         except botocore.exceptions.ClientError as error:
             if error.response['Error']['Code'] == 'ParameterNotFound':
-                self.put_parameter(name, value)
                 return {'Parameter': {'Value': None }}
             else:
                 raise error
