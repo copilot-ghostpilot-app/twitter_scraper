@@ -23,7 +23,7 @@ def main():
     try:
         last_tweet_id = eval(tweets[-1]).get('id')
         print("Setting parameter for next run. Last tweet id: {}".format(last_tweet_id))
-        set_parameter(value=str(last_tweet_id))
+        print(set_parameter(value=str(last_tweet_id)))
     except IndexError as e:
         print("Unable to set the checkpoint parameter in SSM: {}".format(e))
         pass
