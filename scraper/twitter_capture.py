@@ -11,7 +11,7 @@ class TwitterCapture(object):
 
     def __init__(self, woe_id='23424977'):
         self.woe_id = getenv('WORLD_ID') or woe_id
-        self.since_date = getenv('SINCE_DATE') or '2020-03-01'
+        self.since_date = getenv('SINCE_DATE') or '2020-10-26'
         self.twitter_term = getenv('TWITTER_KEYWORD') or '#awscopilot'
         self.param_name = getenv('CHECKPOINT_PARAMETER_NAME')
         self.api = self.instantiate_api()
